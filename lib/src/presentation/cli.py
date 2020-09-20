@@ -1,14 +1,14 @@
 import argparse
 import json
-import logging
 import os
 import sys
 from pathlib import Path
 
 from lib.src.application.image_scaling import scale_image
+from lib.src.util.logger import get_logger
 
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 image_convert_facade_parser = argparse.ArgumentParser(
@@ -70,8 +70,8 @@ jpeg_scaler_v2_command.add_argument(
 )
 
 
-def image_scaler(version: str, args: dict) -> None:
-    if version == 'v1':
+def image_scaler(args: dict) -> None:
+    if 'datafile' not in args:
         jpeg_scaler_v1(
             input_filepath=args.get('input_filepath'),
             output_filename=args.get('output_filename'),
@@ -90,11 +90,6 @@ def jpeg_scaler_v1(input_filepath: str, output_filename: str, scale: int) -> Non
         )
     else:
         logger.info('not enough arguments passed')
-        logger.info(
-            f'input_filepath={input_filepath}',
-            f'output_filename={output_filename}',
-            f'scale={scale}'
-        )
 
 
 def jpeg_scaler_v2(datafile: str) -> None:
@@ -105,4 +100,3 @@ def jpeg_scaler_v2(datafile: str) -> None:
                 jpeg_scaler_v1(**d)
     else:
         logger.info('data file not found')
-        logger.info(f'datafile={datafile}')
