@@ -1,0 +1,6 @@
+venv/
+.pyest_cache
+__pycache__/
+*.md
+.git
+.gitignore

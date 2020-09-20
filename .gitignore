@@ -1,0 +1,3 @@
+venv/
+.pyest_cache
+__pycache__/

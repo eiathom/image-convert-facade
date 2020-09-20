@@ -1,0 +1,14 @@
+{
+    "data": [
+        {
+            "input_filepath": "images/image.png",
+            "scale": 25,
+            "output_filename": "scaled_image_25"
+        },
+        {
+            "input_filepath": "images/image.png",
+            "scale": 200,
+            "output_filename": "scaled_image_200"
+        }
+    ]
+}
