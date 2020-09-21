@@ -139,7 +139,7 @@ class Program(ABC):
     def get_program_name(self) -> str:
         return self.program_name
 
-    def get_command(self) -> str:
+    def get_command(self) -> Command:
         return self.command
 
     def get_program_command(self) -> list:

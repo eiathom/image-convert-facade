@@ -174,6 +174,9 @@ processes:
 
 # cli
 
+showing the functionality each CLI version provides (v1, v2) and, future
+functionality (v3)
+
 ## version 1
 
 - `"jpeg-scaler"`: resize a JPEG image using a scale value
@@ -245,3 +248,19 @@ json format:
     ]
 }
 ```
+
+# deployment
+
+Imagine we are to turn the script in Section A into a cloud service. You can assume that the
+original script has been expanded into a feature-complete wrapper for ImageMagick. Describe
+how you would scale this into a service that is capable of handling thousands of requests per
+minute.
+
+In your answer you should consider the following:
+- Infrastructure: which hosting platform and specific services would you use (feel free to
+draw any diagrams to aid in the description of your architecture choices)?
+- Implementation: deployment pipeline, testing, on-going service maintenance, availability
+and redundancy.
+- Observability: logging, monitoring and alarming.
+- Variable load: how would you design the service for spiky / smooth / constant demand?
+- Data persistence: how would you persist results and image metadata?
