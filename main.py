@@ -19,5 +19,6 @@ if __name__ == '__main__':
 
     if programs:
         for program in programs and programs:
-            run_command(program=program)
+            success, std = run_command(program=program)
+            logger.info(f'success={success}, std={std}')
 
