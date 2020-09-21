@@ -18,7 +18,7 @@ if __name__ == '__main__':
     programs = jpeg_scaler_handler(args_dict)
 
     if programs:
-        for program in programs and programs:
+        for program in programs:
             success, std = run_command(program=program)
             logger.info(f'success={success}, std={std}')
 
