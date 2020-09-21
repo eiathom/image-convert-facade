@@ -71,9 +71,17 @@ pytest -sv lib/test/
 
 # cli version 1
 
+python main.py jpeg_scaler -h  # get help
+
+# example
+
 python main.py jpeg_scaler -i path/to/image/file.jpg -o name_of_output_file -s number_to_scale_by
 
 # cli version 2
+
+python main.py jpeg_scaler_v2 -h  # get help
+
+# example
 
 python main.py jpeg_scaler_v2 -d path/to/json/file.json
 
