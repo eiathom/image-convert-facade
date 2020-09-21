@@ -69,7 +69,7 @@ class ResizeOption(Option):
 class Command(ABC):
     def __init__(self, command_name: str, options: Optional[Options]):
         self.command_name = command_name
-        self.options = options
+        self.options = options if options else []
 
     def get_command_name(self) -> str:
         return self.command_name
@@ -93,8 +93,8 @@ class ConvertCommand(Command):
         input_filepath: str,
         output_filename: str,
         command_name='convert',
-        output_file_format: Optional[str] = None,
-        options: Optional[Options] = []
+        options: Optional[Options] = None,
+        output_file_format: Optional[str] = None
         ):
         super().__init__(command_name, options)
         self.input_filepath = input_filepath
