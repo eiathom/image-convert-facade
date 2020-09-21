@@ -1,15 +1,4 @@
 import argparse
-import json
-import os
-import sys
-from pathlib import Path
-
-from lib.src.application.image_scaling import scale_image
-from lib.src.util.logger import get_logger
-
-
-logger = get_logger(__name__)
-
 
 image_convert_facade_parser = argparse.ArgumentParser(
     prog='image_convert_facade',
@@ -24,7 +13,7 @@ subparsers = image_convert_facade_parser.add_subparsers(
     help='additional help'
 )
 
-jpeg_scaler_command = subparsers.add_parser('jpeg_scaler_v1', aliases=['jps1'])
+jpeg_scaler_command = subparsers.add_parser('jpeg_scaler', aliases=['jps'])
 
 jpeg_scaler_command.add_argument(
     '-i',
@@ -68,35 +57,3 @@ jpeg_scaler_v2_command.add_argument(
     dest='datafile',
     help='datafile containing multiple data to scale images'
 )
-
-
-def image_scaler(args: dict) -> None:
-    if 'datafile' not in args:
-        jpeg_scaler_v1(
-            input_filepath=args.get('input_filepath'),
-            output_filename=args.get('output_filename'),
-            scale=args.get('scale')
-        )
-    else:
-        jpeg_scaler_v2(datafile=args.get('datafile'))
-
-
-def jpeg_scaler_v1(input_filepath: str, output_filename: str, scale: int) -> None:
-    if all([input_filepath, output_filename, scale]):
-        scale_image(
-            input_filepath=input_filepath,
-            output_filename=output_filename,
-            scale=scale
-        )
-    else:
-        logger.info('not enough arguments passed')
-
-
-def jpeg_scaler_v2(datafile: str) -> None:
-    if datafile and Path(datafile).exists():
-        with open(datafile) as json_file:
-            data = json.load(json_file)
-            for d in data['data']:
-                jpeg_scaler_v1(**d)
-    else:
-        logger.info('data file not found')

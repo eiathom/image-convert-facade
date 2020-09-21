@@ -7,6 +7,78 @@ see [here](https://www.imagemagick.org/script/download.php).
 alternatively, a Docker file has been created to use this library containerized
 (thereby not affecting the host OS, or need to install a binary on the host).
 
+# running
+
+this library was built under `Python 3.6.6`
+
+## install python environment
+
+```sh
+
+python3 -m venv venv
+
+. venv/bin/activate
+
+```
+
+## install dependencies
+
+```sh
+
+make install
+
+# if make is not installed on this system
+
+pip install -r requirements.txt
+
+```
+
+## running tests
+
+### local
+
+```sh
+
+make test
+
+# if make is not installed on this system
+
+pytest -sv lib/test/
+
+```
+
+### containerized
+
+```sh
+
+make docker-build
+
+make docker-run-tests
+
+# if make is not installed on this system
+
+docker build -t image-convert-facade .
+
+docker run -it --rm --name icf image-convert-facade bash
+
+pytest -sv lib/test/
+
+```
+
+## running a version of the CLI
+
+```sh
+
+# cli version 1
+
+python main.py jpeg_scaler_v1 -i path/to/image/file.jpg -o name_of_output_file -s number_to_scale_by
+
+# cli version 2
+
+python main.py jpeg_scaler_v2 -d path/to/json/file.json
+
+```
+
 # first principles
 
 why this will present value:
@@ -55,8 +127,7 @@ INFRASTRUCTURE
 
 a __client__ of the system interacts with _'it'_ though the cli or api
 
-each layer is __dependent__ on the previous layer, and cannot (nor should not)
-_communicate_ upstream (to the previous layer).
+each layer is __communicating__ downstream
 
 # domain model
 

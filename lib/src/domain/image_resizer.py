@@ -1,102 +1,141 @@
-from typing import Optional
-
-from lib.src.infrastructure.image_io import (
-    does_file_exist,
-    get_image_file_format,
-    get_filetype,
-    get_filepath_parents,
-    merge_path_and_filename,
-    run_command,
+from abc import (
+    ABC,
+    abstractmethod,
+)
+from typing import (
+    Optional,
+    List,
 )
 
-PERCENT_OPERATOR = 'PERCENT'
 
-OPERATORS={
-    PERCENT_OPERATOR: '%'
-}
-
-MAGICK_PROGRAM_NAME = 'magick'
-MAGICK_CONVERT_COMMAND_NAME = 'convert'
+from lib.src.util.file import get_output_image_filepath
 
 
-def do_convert_image(
-    input_filepath: str,
-    output_filename: str,
-    output_file_format: str
-    ):
-    command_args = get_command_args(
-        input_filepath=input_filepath,
-        output_filename=output_filename,
-        scale_width=100,
-        scale_height=100,
-        operator=OPERATORS.get(PERCENT_OPERATOR),
-        output_file_format=output_file_format
-    )
-    return run_command(
-        program=MAGICK_PROGRAM_NAME,
-        command=MAGICK_CONVERT_COMMAND_NAME,
-        command_args=command_args,
-    )
+class Option(ABC):
+    def __init__(self, option_name: str):
+        self.option_name = option_name
+
+    def get_option_name(self) -> str:
+        return self.option_name
+
+    @abstractmethod
+    def get_option_argument(self) -> list:
+        raise NotImplementedError
 
 
-def do_scale_image(
-    input_filepath: str,
-    output_filename: str,
-    scale: int
-    ):
-    command_args = get_command_args(
-        input_filepath=input_filepath,
-        output_filename=output_filename,
-        scale_width=scale,
-        scale_height=scale,
-        operator=OPERATORS.get(PERCENT_OPERATOR)
-    )
-    return run_command(
-        program=MAGICK_PROGRAM_NAME,
-        command=MAGICK_CONVERT_COMMAND_NAME,
-        command_args=command_args,
-    )
+Options = List[Option]  # type
 
 
-def get_input_filepath_format(filepath):
+class ResizeOption(Option):
+    PERCENT_OPERATOR = 'PERCENT'
+    OPERATORS={
+        PERCENT_OPERATOR: '%'
+    }
 
-    input_filepath_format = get_image_file_format(filepath)
+    def __init__(
+        self,
+        scale_width: int,
+        scale_height: int,
+        operator: Optional[str] = OPERATORS.get(PERCENT_OPERATOR),
+        option_name='resize'
+        ):
+        super().__init__(option_name)
+        self.scale_width = scale_width
+        self.scale_height = scale_height
+        self.operator = operator
 
-    if not input_filepath_format:
-        raise Exception(f'{filepath} is not an image')
+    def get_scale_width(self) -> int:
+        return self.scale_width
 
-    input_filepath_filetype = get_filetype(filepath)
+    def get_scale_height(self) -> int:
+        return self.scale_height
 
-    if input_filepath_format == 'jpeg' and input_filepath_filetype == 'jpg':
-        input_filepath_format = input_filepath_filetype
+    def get_operator(self) -> str:
+        return self.operator
 
-    return input_filepath_format
+    def get_option_argument(self) -> list:
+        return [
+            f'-{self.get_option_name()}',
+            f'{self.get_scale_width()}x{self.get_scale_height()}{self.get_operator()}'
+        ]
 
 
-def get_command_args(
-    input_filepath: str,
-    output_filename: str,
-    scale_width: int,
-    scale_height: int,
-    operator: str,
-    output_file_format: Optional[str] = None
-    ) -> list:
+class Command(ABC):
+    def __init__(self, command_name: str, options: Optional[Options]):
+        self.command_name = command_name
+        self.options = options
 
-    if not does_file_exist(input_filepath):
-        raise Exception(f'{input_filepath} does not exist')
+    def get_command_name(self) -> str:
+        return self.command_name
 
-    if scale_width < 0 or scale_height < 0:
-        raise Exception('width and height should be positive integers')
+    def get_options(self) -> Options:
+        return self.options
 
-    file_format_to_use = (output_file_format if 
-        output_file_format is not None else
-        get_input_filepath_format(input_filepath)
-    )
+    def get_flattened_options(self):
+        nested_options = [options.get_option_argument() for options in self.get_options()]
+        flattened_options = [option for options in nested_options for option in options]
+        return flattened_options
 
-    output_filepath = str(merge_path_and_filename(
-        get_filepath_parents(input_filepath),
-        f'{output_filename}.{file_format_to_use}'
-    ))
+    @abstractmethod
+    def get_command_options(self) -> list:
+        raise NotImplementedError
 
-    return [input_filepath, '-resize', f'{scale_width}x{scale_height}{operator}', output_filepath]
 
+class ConvertCommand(Command):
+    def __init__(
+        self,
+        input_filepath: str,
+        output_filename: str,
+        command_name='convert',
+        output_file_format: Optional[str] = None,
+        options: Optional[Options] = []
+        ):
+        super().__init__(command_name, options)
+        self.input_filepath = input_filepath
+        self.output_filename = output_filename
+        self.output_file_format = output_file_format
+
+    def get_input_filepath(self) -> str:
+        return self.input_filepath
+
+    def get_output_filename(self) -> str:
+        return self.output_filename
+
+    def get_output_file_format(self):
+        return self.output_file_format
+
+    def get_output_filepath(self):
+        return get_output_image_filepath(
+            self.get_input_filepath(),
+            self.get_output_filename(),
+            self.get_output_file_format()
+        )
+
+    def get_command_options(self) -> list:
+        command_options = self.get_flattened_options()
+        command_options.insert(0, self.get_command_name())
+        command_options.insert(1, self.get_input_filepath())
+        command_options.append(self.get_output_filepath())
+        return command_options
+
+
+class Program(ABC):
+    def __init__(self, program_name: str, command: Command):
+        self.program_name = program_name
+        self.command = command
+
+    def get_program_name(self) -> str:
+        return self.program_name
+
+    def get_command(self) -> str:
+        return self.command
+
+    def get_program_command(self) -> list:
+        commands = self.get_command().get_command_options()
+        commands.insert(0, self.get_program_name())
+        return commands
+
+
+class MagickProgram(Program):
+    def __init__(self, command: Command, program_name='magick'):
+        super().__init__(program_name, command)
