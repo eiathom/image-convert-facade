@@ -1,3 +1,5 @@
 venv/
 .pyest_cache
 __pycache__/
+images/
+data/
