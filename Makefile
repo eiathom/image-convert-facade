@@ -1,6 +1,3 @@
-cli:
-	PYTHONPATH=. python lib/src/presentation/cli.py $(ARGS)
-
 docker-build:
 	docker build -t image-convert-facade .
 
@@ -21,5 +18,6 @@ test: unit
 clean:
 	find . -type f -name "*.pyc" -delete
 	rm -fr .cache .mypy_cache .pytest_cache
+	rm -f images/scaled*
 
-.PHONY: cli docker-build docker-run docker-run-tests install unit test clean
+.PHONY: docker-build docker-run docker-run-tests install unit test clean
