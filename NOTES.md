@@ -71,7 +71,7 @@ pytest -sv lib/test/
 
 # cli version 1
 
-python main.py jpeg_scaler_v1 -i path/to/image/file.jpg -o name_of_output_file -s number_to_scale_by
+python main.py jpeg_scaler -i path/to/image/file.jpg -o name_of_output_file -s number_to_scale_by
 
 # cli version 2
 
@@ -113,7 +113,6 @@ DOMAIN
         [model]
         - most important layer
         - defines the business case
-        - delegates tasks (to downstream)
 -------------------------------
 INFRASTRUCTURE
         [io]
@@ -127,7 +126,10 @@ INFRASTRUCTURE
 
 a __client__ of the system interacts with _'it'_ though the cli or api
 
-each layer is __communicating__ downstream
+the __domain__ should not depend on any other layer
+
+each layer is __communicating__ downstream; no upstream communication should be
+possible within the layered architecture
 
 # domain model
 
@@ -138,21 +140,11 @@ value extracted:
 
 "image scaling"
 
-- image-io
 - image-resizer
 
 ## model
 
 processes which - combine to - extract value
-
-### image-io
-
-eventually, with more features to be added/wrapped, this model may have its own
-domain (to serve other domains including this one).
-
-processes:
-- does the image exist (the input file)
-- is the image valid (the output file; can it be written to)
 
 ### image-resizer
 
@@ -196,7 +188,7 @@ processes:
         - [2] `output_filename`:
             - string
             - name given for the scaled image
-            - the image will be located under the same path as the original image
+            - __the image will be located under the same path as the original image__
 
 ## version 2
 
