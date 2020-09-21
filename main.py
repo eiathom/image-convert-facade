@@ -17,6 +17,7 @@ if __name__ == '__main__':
 
     programs = jpeg_scaler_handler(args_dict)
 
-    for program in programs:
-        run_command(program=program)
+    if programs:
+        for program in programs and programs:
+            run_command(program=program)
 

@@ -10,5 +10,5 @@ def load_json_data_from_file(json_filepath: str) -> Any:
         with open(json_filepath) as json_file:
             data = json.load(json_file)
         return data
-    raise FileNotFoundError('f{json_filepath} does not exist')
+    raise FileNotFoundError('file does not exist', json_filepath)
 

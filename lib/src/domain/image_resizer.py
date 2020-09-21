@@ -59,6 +59,12 @@ class ResizeOption(Option):
             f'{self.get_scale_width()}x{self.get_scale_height()}{self.get_operator()}'
         ]
 
+    def __repr__(self):
+        return f'ResizeOption(scale_width: {self.scale_width}, scale_height: {self.scale_height})'
+
+    def __str__(self):
+        return f'scale_width: {self.scale_width}, scale_height: {self.scale_height}'
+
 
 class Command(ABC):
     def __init__(self, command_name: str, options: Optional[Options]):
@@ -118,6 +124,12 @@ class ConvertCommand(Command):
         command_options.append(self.get_output_filepath())
         return command_options
 
+    def __repr__(self):
+        return f'ConvertCommand(input_filepath:{self.input_filepath}, output_filename:{self.output_filename})'
+
+    def __str__(self):
+        return f'input_filepath: {self.input_filepath}, output_filename: {self.output_filename}'
+
 
 class Program(ABC):
     def __init__(self, program_name: str, command: Command):
@@ -139,3 +151,9 @@ class Program(ABC):
 class MagickProgram(Program):
     def __init__(self, command: Command, program_name='magick'):
         super().__init__(program_name, command)
+
+    def __repr__(self):
+        return f'MagickProgram(command: {self.command})'
+
+    def __str__(self):
+        return f'command: {self.command}'
