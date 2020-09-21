@@ -47,7 +47,7 @@ pytest -sv lib/test/
 
 ```
 
-### containerized
+### containerised
 
 ```sh
 
@@ -65,7 +65,7 @@ pytest -sv lib/test/
 
 ```
 
-## running a version of the CLI
+## running a version of the CLI (locally or containerised)
 
 ```sh
 

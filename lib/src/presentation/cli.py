@@ -1,8 +1,6 @@
 import argparse
 
 image_convert_facade_parser = argparse.ArgumentParser(
-    prog='image_convert_facade',
-    usage='%(prog)s [options]',
     description='manipulate image files',
     epilog='end',
 )
