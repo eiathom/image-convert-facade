@@ -13,7 +13,10 @@ install:
 unit:
 	pytest -sv lib/test/unit
 
-test: unit
+integration:
+	pytest -sv lib/test/integration
+
+test: unit integration
 
 clean:
 	find . -type f -name "*.pyc" -delete
@@ -27,6 +30,11 @@ create-venv:
 generate-pip-conf:
 	echo '[global]\ntimeout = 60\nindex-url = https://pypi.python.org/simple/\n' >> venv/pip.conf
 
+freeze:
+	pip freeze -r requirements.txt > requirements.txt
 
-.PHONY: docker-build docker-run docker-run-tests install unit test clean, create-venv, generate-pip-conf
+lint:
+	black --target-version py36 --diff --color lib/
+
+.PHONY: docker-build docker-run docker-run-tests install unit integration test clean create-venv generate-pip-conf freeze lint
  

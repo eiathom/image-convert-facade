@@ -12,7 +12,7 @@ logger = get_logger(__name__)
 
 
 def run_command(program: Program, **options: Optional[dict]) -> tuple:
-    logger.info(f'running program: {program} with options: {options}')
+    logger.info(f"running program: {program} with options: {options}")
 
     completed_process = run(
         args=program.get_program_command(),
@@ -21,13 +21,13 @@ def run_command(program: Program, **options: Optional[dict]) -> tuple:
         shell=False,
         check=False,
         universal_newlines=True,
-        **options
+        **options,
     )
 
     command_successful = completed_process.returncode == 0
-    logger.info(f'command success: {command_successful}')
+    logger.info(f"command success: {command_successful}")
 
     return (
         command_successful,
-        completed_process.stdout if command_successful else completed_process.stderr
+        completed_process.stdout if command_successful else completed_process.stderr,
     )

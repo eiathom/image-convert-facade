@@ -7,18 +7,17 @@ from lib.src.util.logger import get_logger
 logger = get_logger(__name__)
 
 
-if __name__ == '__main__':
-    logger.info('starting CLI...')
+if __name__ == "__main__":
+    logger.info("starting CLI...")
 
     args = image_convert_facade_parser.parse_args()
     args_dict = vars(args)
 
-    logger.info(f'args={args_dict}')
+    logger.info(f"args={args_dict}")
 
     programs = jpeg_scaler_handler(args_dict)
 
     if programs:
         for program in programs:
             success, std = run_command(program=program)
-            logger.info(f'success={success}, std={std}')
-
+            logger.info(f"success={success}, std={std}")

@@ -43,7 +43,8 @@ COPY . ${INSTALL_PATH}
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONPATH ${INSTALL_PATH}
 
-RUN make install
+RUN pip install --upgrade pip \
+    && make install
 
 # Docker will attempt to execute this directly (without an interperter)
 # variables and variable expansion thus are not recognised

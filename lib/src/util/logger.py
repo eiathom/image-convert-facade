@@ -3,8 +3,7 @@ import os
 
 
 logging.basicConfig(
-    format='[%(levelname)s] %(asctime)s - %(message)s',
-    level=logging.INFO
+    format="[%(levelname)s] %(asctime)s - %(message)s", level=logging.INFO
 )
 
 

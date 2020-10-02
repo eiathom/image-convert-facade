@@ -28,22 +28,20 @@ Options = List[Option]  # type
 
 
 class ResizeOption(Option):
-    PERCENT_OPERATOR = 'PERCENT'
-    OPERATORS={
-        PERCENT_OPERATOR: '%'
-    }
+    PERCENT_OPERATOR = "PERCENT"
+    OPERATORS = {PERCENT_OPERATOR: "%"}
 
     def __init__(
         self,
         scale_width: int,
         scale_height: int,
-        operator: Optional[str] = OPERATORS.get(PERCENT_OPERATOR)
-        ):
+        operator: Optional[str] = OPERATORS.get(PERCENT_OPERATOR),
+    ):
         super().__init__()
         self.scale_width = scale_width
         self.scale_height = scale_height
         self.operator = operator
-        self._option_name = 'resize'
+        self._option_name = "resize"
 
     def get_option_name(self) -> str:
         return self._option_name
@@ -59,15 +57,15 @@ class ResizeOption(Option):
 
     def get_option_argument(self) -> list:
         return [
-            f'-{self.get_option_name()}',
-            f'{self.get_scale_width()}x{self.get_scale_height()}{self.get_operator()}'
+            f"-{self.get_option_name()}",
+            f"{self.get_scale_width()}x{self.get_scale_height()}{self.get_operator()}",
         ]
 
     def __repr__(self):
-        return f'ResizeOption(scale_width: {self.scale_width}, scale_height: {self.scale_height})'
+        return f"ResizeOption(scale_width: {self.scale_width}, scale_height: {self.scale_height})"
 
     def __str__(self):
-        return f'scale_width: {self.scale_width}, scale_height: {self.scale_height}'
+        return f"scale_width: {self.scale_width}, scale_height: {self.scale_height}"
 
 
 class Command(ABC):
@@ -78,7 +76,9 @@ class Command(ABC):
         return self.options
 
     def get_flattened_options(self):
-        nested_options = [options.get_option_argument() for options in self.get_options()]
+        nested_options = [
+            options.get_option_argument() for options in self.get_options()
+        ]
         flattened_options = [option for options in nested_options for option in options]
         return flattened_options
 
@@ -97,13 +97,13 @@ class ConvertCommand(Command):
         input_filepath: str,
         output_filename: str,
         options: Optional[Options] = None,
-        output_file_format: Optional[str] = None
-        ):
+        output_file_format: Optional[str] = None,
+    ):
         super().__init__(options)
         self.input_filepath = input_filepath
         self.output_filename = output_filename
         self.output_file_format = output_file_format
-        self._command_name = 'convert'
+        self._command_name = "convert"
 
     def get_command_name(self) -> str:
         return self._command_name
@@ -121,7 +121,7 @@ class ConvertCommand(Command):
         return get_output_image_filepath(
             self.get_input_filepath(),
             self.get_output_filename(),
-            self.get_output_file_format()
+            self.get_output_file_format(),
         )
 
     def get_command_options(self) -> list:
@@ -132,10 +132,10 @@ class ConvertCommand(Command):
         return command_options
 
     def __repr__(self):
-        return f'ConvertCommand(input_filepath:{self.input_filepath}, output_filename:{self.output_filename})'
+        return f"ConvertCommand(input_filepath:{self.input_filepath}, output_filename:{self.output_filename})"
 
     def __str__(self):
-        return f'input_filepath: {self.input_filepath}, output_filename: {self.output_filename}'
+        return f"input_filepath: {self.input_filepath}, output_filename: {self.output_filename}"
 
 
 class Program(ABC):
@@ -158,13 +158,13 @@ class Program(ABC):
 class MagickProgram(Program):
     def __init__(self, command: Command):
         super().__init__(command)
-        self._program_name = 'magick'
+        self._program_name = "magick"
 
     def get_program_name(self) -> str:
         return self._program_name
 
     def __repr__(self):
-        return f'MagickProgram(command: {self.command})'
+        return f"MagickProgram(command: {self.command})"
 
     def __str__(self):
-        return f'command: {self.command}'
+        return f"command: {self.command}"
