@@ -12,11 +12,12 @@ from lib.src.util.file import get_output_image_filepath
 
 
 class Option(ABC):
-    def __init__(self, option_name: str):
-        self.option_name = option_name
+    def __init__(self):
+        pass
 
+    @abstractmethod
     def get_option_name(self) -> str:
-        return self.option_name
+        raise NotImplementedError
 
     @abstractmethod
     def get_option_argument(self) -> list:
@@ -36,13 +37,16 @@ class ResizeOption(Option):
         self,
         scale_width: int,
         scale_height: int,
-        operator: Optional[str] = OPERATORS.get(PERCENT_OPERATOR),
-        option_name='resize'
+        operator: Optional[str] = OPERATORS.get(PERCENT_OPERATOR)
         ):
-        super().__init__(option_name)
+        super().__init__()
         self.scale_width = scale_width
         self.scale_height = scale_height
         self.operator = operator
+        self._option_name = 'resize'
+
+    def get_option_name(self) -> str:
+        return self._option_name
 
     def get_scale_width(self) -> int:
         return self.scale_width
@@ -67,12 +71,8 @@ class ResizeOption(Option):
 
 
 class Command(ABC):
-    def __init__(self, command_name: str, options: Optional[Options]):
-        self.command_name = command_name
+    def __init__(self, options: Optional[Options]):
         self.options = options if options else []
-
-    def get_command_name(self) -> str:
-        return self.command_name
 
     def get_options(self) -> Options:
         return self.options
@@ -81,6 +81,10 @@ class Command(ABC):
         nested_options = [options.get_option_argument() for options in self.get_options()]
         flattened_options = [option for options in nested_options for option in options]
         return flattened_options
+
+    @abstractmethod
+    def get_command_name(self) -> str:
+        raise NotImplementedError
 
     @abstractmethod
     def get_command_options(self) -> list:
@@ -92,14 +96,17 @@ class ConvertCommand(Command):
         self,
         input_filepath: str,
         output_filename: str,
-        command_name='convert',
         options: Optional[Options] = None,
         output_file_format: Optional[str] = None
         ):
-        super().__init__(command_name, options)
+        super().__init__(options)
         self.input_filepath = input_filepath
         self.output_filename = output_filename
         self.output_file_format = output_file_format
+        self._command_name = 'convert'
+
+    def get_command_name(self) -> str:
+        return self._command_name
 
     def get_input_filepath(self) -> str:
         return self.input_filepath
@@ -132,12 +139,8 @@ class ConvertCommand(Command):
 
 
 class Program(ABC):
-    def __init__(self, program_name: str, command: Command):
-        self.program_name = program_name
+    def __init__(self, command: Command):
         self.command = command
-
-    def get_program_name(self) -> str:
-        return self.program_name
 
     def get_command(self) -> Command:
         return self.command
@@ -147,10 +150,18 @@ class Program(ABC):
         commands.insert(0, self.get_program_name())
         return commands
 
+    @abstractmethod
+    def get_program_name(self) -> str:
+        raise NotImplementedError
+
 
 class MagickProgram(Program):
-    def __init__(self, command: Command, program_name='magick'):
-        super().__init__(program_name, command)
+    def __init__(self, command: Command):
+        super().__init__(command)
+        self._program_name = 'magick'
+
+    def get_program_name(self) -> str:
+        return self._program_name
 
     def __repr__(self):
         return f'MagickProgram(command: {self.command})'

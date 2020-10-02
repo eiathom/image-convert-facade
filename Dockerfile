@@ -5,13 +5,22 @@ FROM python:3.6-slim
 RUN apt-get update && apt-get install -y \
     build-essential \
     wget \
+    xz-utils \
+    autoconf \
+    automake \
+    autotools-dev \
+    libtool \
+    pkg-config \
+    libtiff-dev \
+    libpng-dev \
+    libjpeg-dev \
     make
 
 # installing the magick program
 
 WORKDIR /opt
-RUN wget http://www.imagemagick.org/download/ImageMagick-7.0.10-29.tar.gz
-RUN tar xvzf ImageMagick-7.0.10-29.tar.gz
+RUN wget http://www.imagemagick.org/download/releases/ImageMagick-7.0.10-29.tar.xz
+RUN tar -xf ImageMagick-7.0.10-29.tar.xz
 WORKDIR /opt/ImageMagick-7.0.10-29
 RUN ./configure
 RUN make
