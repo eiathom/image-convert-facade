@@ -20,4 +20,13 @@ clean:
 	rm -fr .cache .mypy_cache .pytest_cache
 	rm -f images/scaled*
 
-.PHONY: docker-build docker-run docker-run-tests install unit test clean
+create-venv:
+	rm -rf venv
+	python3 -m venv venv
+
+generate-pip-conf:
+	echo '[global]\ntimeout = 60\nindex-url = https://pypi.python.org/simple/\n' >> venv/pip.conf
+
+
+.PHONY: docker-build docker-run docker-run-tests install unit test clean, create-venv, generate-pip-conf
+ 
