@@ -7,21 +7,30 @@ from pathlib import Path
 
 
 class FileIO(ABC):
+    """abstract/interface class concering file system interactions
+
+    Args:
+        ABC (ABC): abstract base class
+    """
+
     def __init__(self):
+        """class constructor"""
         pass
 
     @abstractmethod
     def does_filepath_exist(self, filepath: str) -> bool:
+        """check whether a file, located at `filepath`, exists
+
+        Args:
+            filepath (str): the path to a file
+
+        Raises:
+            NotImplementedError: if this method has not been implemented
+
+        Returns:
+            bool: True if the file located at filepath exists
+        """
         raise NotImplementedError
-
-
-class FakeFileIO(FileIO):
-    def __init__(self, filepaths: list = []):
-        super().__init__()
-        self._filepaths = filepaths
-
-    def does_filepath_exist(self, filepath: str) -> bool:
-        return filepath and filepath in self._filepaths
 
 
 class RealFileIO(FileIO):
@@ -30,6 +39,15 @@ class RealFileIO(FileIO):
 
     def does_filepath_exist(self, filepath: str) -> bool:
         return filepath and Path(filepath).exists()
+
+
+class FakeFileIO(RealFileIO):
+    def __init__(self, filepaths: list = []):
+        super().__init__()
+        self._filepaths = filepaths
+
+    def does_filepath_exist(self, filepath: str) -> bool:
+        return filepath and filepath in self._filepaths
 
 
 def does_filepath_exist(filepath: str) -> bool:

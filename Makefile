@@ -34,7 +34,7 @@ freeze:
 	pip freeze -r requirements.txt > requirements.txt
 
 lint:
-	black --target-version py36 --diff --color lib/
+	black --target-version py36 --diff --color config/ lib/
 
 .PHONY: docker-build docker-run docker-run-tests install unit integration test clean create-venv generate-pip-conf freeze lint
  
